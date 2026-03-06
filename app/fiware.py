@@ -13,16 +13,20 @@ class OrionClient:
     fiware_service: str
     fiware_servicepath: str
 
-    def _headers(self) -> Dict[str, str]:
-        return {
-            "Content-Type": "application/json",
-            "Fiware-Service": self.fiware_service,
-            "Fiware-ServicePath": self.fiware_servicepath,
-        }
+    def _headers(self, include_content_type: bool = False) -> Dict[str, str]:
+        headers: Dict[str, str] = {}
+        if include_content_type:
+            headers["Content-Type"] = "application/json"
+        if self.fiware_service:
+            headers["Fiware-Service"] = self.fiware_service
+        if self.fiware_servicepath and self.fiware_service:
+            headers["Fiware-ServicePath"] = self.fiware_servicepath
+        return headers
 
     def _request(self, method: str, path: str, **kwargs: Any) -> requests.Response:
+        include_content_type = "json" in kwargs or "data" in kwargs
         headers = kwargs.pop("headers", {})
-        merged_headers = {**self._headers(), **headers}
+        merged_headers = {**self._headers(include_content_type=include_content_type), **headers}
         response = requests.request(
             method=method,
             url=f"{self.base_url}{path}",

@@ -11,7 +11,7 @@
   <table>
     <thead><tr><th>Shelf</th><th>Shelf Count</th><th>Stock Count</th></tr></thead>
     <tbody>
-      {% for row in block.items %}
+      {% for row in block['items'] %}
       <tr>
         <td>{{ row.shelf.name if row.shelf else row.inventory.refShelf }}</td>
         <td>{{ row.inventory.shelfCount }}</td>

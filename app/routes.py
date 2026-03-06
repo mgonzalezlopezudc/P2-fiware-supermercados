@@ -345,6 +345,7 @@ def api_available_products(shelf_id: str):
 
 def _handle_notification(event_name: str, payload: Dict[str, Any]) -> Response:
     data = payload.get("data", [])
+    current_app.logger.info("Subscription %s received %s items", event_name, len(data))
     socketio.emit(event_name, {"items": data})
     return Response(status=204)
 

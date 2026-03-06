@@ -21,7 +21,7 @@
   <table>
     <thead><tr><th>Product</th><th>Price</th><th>Size</th><th>Color</th><th>Stock</th><th>Shelf</th><th>Buy</th></tr></thead>
     <tbody>
-      {% for item in row.items %}
+      {% for item in row['items'] %}
       <tr>
         <td>{{ item.product.name if item.product else item.inventory.refProduct }}</td>
         <td class="js-price" data-product-id="{{ item.inventory.refProduct }}">{{ item.product.price if item.product else '-' }}</td>
