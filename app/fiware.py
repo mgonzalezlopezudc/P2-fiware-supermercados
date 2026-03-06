@@ -77,6 +77,9 @@ class OrionClient:
     def create_registration(self, payload: Dict[str, Any]) -> None:
         self._request("POST", "/v2/registrations", json=payload)
 
+    def delete_registration(self, registration_id: str) -> None:
+        self._request("DELETE", f"/v2/registrations/{registration_id}")
+
 
 ENTITY_PREFIXES = {
     "Store": "urn:ngsi-ld:Store",
@@ -89,40 +92,47 @@ ENTITY_PREFIXES = {
 
 def ensure_external_providers(client: OrionClient, provider_url: str) -> None:
     registrations = client.list_registrations()
-    existing = {reg.get("description") for reg in registrations}
+    by_desc = {reg.get("description"): reg for reg in registrations}
 
-    weather_desc = "Store weather provider"
-    tweets_desc = "Store tweets provider"
+    desired = [
+        {
+            "description": "Store weather provider",
+            "dataProvided": {
+                "entities": [{"type": "Store", "idPattern": ".*"}],
+                "attrs": ["temperature", "relativeHumidity"],
+            },
+            "provider": {
+                "http": {"url": f"{provider_url}/random/weatherConditions"},
+                "legacyForwarding": False,
+            },
+        },
+        {
+            "description": "Store tweets provider",
+            "dataProvided": {
+                "entities": [{"type": "Store", "idPattern": ".*"}],
+                "attrs": ["tweets"],
+            },
+            "provider": {
+                "http": {"url": f"{provider_url}/catfacts/tweets"},
+                "legacyForwarding": False,
+            },
+        },
+    ]
 
-    if weather_desc not in existing:
-        client.create_registration(
-            {
-                "description": weather_desc,
-                "dataProvided": {
-                    "entities": [{"type": "Store", "idPattern": ".*"}],
-                    "attrs": ["temperature", "relativeHumidity"],
-                },
-                "provider": {
-                    "http": {"url": f"{provider_url}/static-attrs"},
-                    "legacyForwarding": False,
-                },
-            }
-        )
+    for payload in desired:
+        description = payload["description"]
+        current = by_desc.get(description)
+        desired_url = payload["provider"]["http"]["url"]
 
-    if tweets_desc not in existing:
-        client.create_registration(
-            {
-                "description": tweets_desc,
-                "dataProvided": {
-                    "entities": [{"type": "Store", "idPattern": ".*"}],
-                    "attrs": ["tweets"],
-                },
-                "provider": {
-                    "http": {"url": f"{provider_url}/tweets"},
-                    "legacyForwarding": False,
-                },
-            }
-        )
+        if current:
+            current_url = (((current.get("provider") or {}).get("http") or {}).get("url"))
+            if current_url == desired_url:
+                continue
+            registration_id = current.get("id")
+            if registration_id:
+                client.delete_registration(registration_id)
+
+        client.create_registration(payload)
 
 
 def _create_subscription_if_missing(client: OrionClient, description: str, payload: Dict[str, Any]) -> None:
