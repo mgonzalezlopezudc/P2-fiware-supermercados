@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}Stores Map | FIWARE Markets{% endblock %}
+{% block extra_head %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+{% endblock %}
 {% block content %}
 <section class="page-head"><h1>Stores Map</h1></section>
 <section class="map-stage">
-  {% for store in stores %}
-  {% set coords = store.location.coordinates if store.location and store.location.coordinates else [13.4, 52.5] %}
-  <a class="map-pin" href="{{ url_for('main.store_detail', store_id=store.id) }}" style="left: {{ ((coords[0] - 13.35) / 0.12 * 100)|round(1) }}%; top: {{ (100 - ((coords[1] - 52.48) / 0.09 * 100))|round(1) }}%;">
-    <span class="pin-dot"></span>
-    <span class="hover-card">
-      <strong>{{ store.name }}</strong>
-      <small>{{ store.address.addressLocality if store.address else '' }}</small>
-    </span>
-  </a>
-  {% endfor %}
+  <div id="stores-leaflet-map" aria-label="Interactive stores map"></div>
+  <script id="stores-map-data" type="application/json">{{ stores | tojson }}</script>
 </section>
+{% endblock %}
+{% block scripts %}
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
 {% endblock %}

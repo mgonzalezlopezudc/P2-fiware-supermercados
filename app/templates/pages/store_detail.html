@@ -6,9 +6,36 @@
   <p>{{ store.address.streetAddress if store.address else '' }}, {{ store.address.addressLocality if store.address else '' }}</p>
 </section>
 <section class="store-signals">
-  <div class="signal temp"><i class="fa-solid fa-temperature-three-quarters"></i><span>{{ store.temperature or 'N/A' }}</span></div>
-  <div class="signal humidity"><i class="fa-solid fa-droplet"></i><span>{{ store.relativeHumidity or 'N/A' }}</span></div>
-  <div class="signal tweets"><i class="fa-brands fa-x-twitter"></i><span>{{ store.tweets or 'No tweets' }}</span></div>
+  <div class="signal temp metric">
+    <i class="fa-solid fa-temperature-three-quarters"></i>
+    <div>
+      <small>Temperature</small>
+      <strong>{{ store.temperature or 'N/A' }}</strong>
+    </div>
+  </div>
+  <div class="signal humidity metric">
+    <i class="fa-solid fa-droplet"></i>
+    <div>
+      <small>Humidity</small>
+      <strong>{{ store.relativeHumidity or 'N/A' }}</strong>
+    </div>
+  </div>
+  <div class="signal tweets">
+    <i class="fa-brands fa-x-twitter"></i>
+    <div class="tweets-content">
+      {% if store.tweets is sequence and store.tweets is not string and store.tweets|length > 0 %}
+      <ul class="tweets-list">
+        {% for tweet in store.tweets %}
+        <li>{{ tweet }}</li>
+        {% endfor %}
+      </ul>
+      {% elif store.tweets %}
+      <p class="tweets-text">{{ store.tweets }}</p>
+      {% else %}
+      <p class="tweets-text">No tweets</p>
+      {% endif %}
+    </div>
+  </div>
 </section>
 <section class="card">
   <h3>Notifications</h3>

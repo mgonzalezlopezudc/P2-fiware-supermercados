@@ -89,50 +89,79 @@ ENTITY_PREFIXES = {
     "Employee": "urn:ngsi-ld:Employee",
 }
 
+STORE_CODES = ("001", "002", "003", "004")
+
 
 def ensure_external_providers(client: OrionClient, provider_url: str) -> None:
     registrations = client.list_registrations()
     by_desc = {reg.get("description"): reg for reg in registrations}
 
-    desired = [
-        {
-            "description": "Store weather provider",
-            "dataProvided": {
-                "entities": [{"type": "Store", "idPattern": ".*"}],
-                "attrs": ["temperature", "relativeHumidity"],
-            },
-            "provider": {
-                "http": {"url": f"{provider_url}/random/weatherConditions"},
-                "legacyForwarding": False,
-            },
-        },
-        {
-            "description": "Store tweets provider",
-            "dataProvided": {
-                "entities": [{"type": "Store", "idPattern": ".*"}],
-                "attrs": ["tweets"],
-            },
-            "provider": {
-                "http": {"url": f"{provider_url}/catfacts/tweets"},
-                "legacyForwarding": False,
-            },
-        },
-    ]
+    desired: List[Dict[str, Any]] = []
+    for code in STORE_CODES:
+        store_id = f"urn:ngsi-ld:Store:{code}"
+        desired.append(
+            {
+                "description": f"Store {code} weather provider",
+                "dataProvided": {
+                    "entities": [{"type": "Store", "id": store_id}],
+                    "attrs": ["temperature", "relativeHumidity"],
+                },
+                "provider": {
+                    "http": {"url": f"{provider_url}/random/weatherConditions"},
+                    "legacyForwarding": False,
+                },
+            }
+        )
+        desired.append(
+            {
+                "description": f"Store {code} tweets provider",
+                "dataProvided": {
+                    "entities": [{"type": "Store", "id": store_id}],
+                    "attrs": ["tweets"],
+                },
+                "provider": {
+                    "http": {"url": f"{provider_url}/catfacts/tweets"},
+                    "legacyForwarding": False,
+                },
+            }
+        )
+
+    desired_by_desc = {item["description"]: item for item in desired}
+    legacy_descriptions = {"Store weather provider", "Store tweets provider"}
+
+    for description, current in by_desc.items():
+        current_id = current.get("id")
+        if not current_id:
+            continue
+
+        target = desired_by_desc.get(description)
+        if target is None:
+            if description in legacy_descriptions:
+                client.delete_registration(current_id)
+            continue
+
+        current_data = current.get("dataProvided") or {}
+        target_data = target.get("dataProvided") or {}
+        current_url = (((current.get("provider") or {}).get("http") or {}).get("url"))
+        target_url = (((target.get("provider") or {}).get("http") or {}).get("url"))
+
+        if (
+            current_url == target_url
+            and current_data.get("entities") == target_data.get("entities")
+            and current_data.get("attrs") == target_data.get("attrs")
+        ):
+            continue
+
+        client.delete_registration(current_id)
+
+    existing_descriptions = {
+        reg.get("description")
+        for reg in client.list_registrations()
+    }
 
     for payload in desired:
-        description = payload["description"]
-        current = by_desc.get(description)
-        desired_url = payload["provider"]["http"]["url"]
-
-        if current:
-            current_url = (((current.get("provider") or {}).get("http") or {}).get("url"))
-            if current_url == desired_url:
-                continue
-            registration_id = current.get("id")
-            if registration_id:
-                client.delete_registration(registration_id)
-
-        client.create_registration(payload)
+        if payload["description"] not in existing_descriptions:
+            client.create_registration(payload)
 
 
 def _create_subscription_if_missing(client: OrionClient, description: str, payload: Dict[str, Any]) -> None:
@@ -204,7 +233,7 @@ def to_product_entity(payload: Dict[str, Any], entity_id: str) -> Dict[str, Any]
         "price": ngsi_attr(float(payload["price"]), "Number"),
         "size": ngsi_attr(payload["size"], "Text"),
         "color": ngsi_attr(payload["color"], "Text"),
-        "image": ngsi_attr(payload.get("image") or "https://placehold.co/96x96", "Text"),
+        "image": ngsi_attr(payload.get("image"), "Text"),
     }
 
 
@@ -231,7 +260,7 @@ def to_store_entity(payload: Dict[str, Any], entity_id: str) -> Dict[str, Any]:
         "countryCode": ngsi_attr(payload["countryCode"], "Text"),
         "capacity": ngsi_attr(float(payload["capacity"]), "Number"),
         "description": ngsi_attr(payload["description"], "Text"),
-        "image": ngsi_attr(payload.get("image") or "https://placehold.co/120x120", "Text"),
+        "image": ngsi_attr(payload.get("image"), "Text"),
     }
 
 

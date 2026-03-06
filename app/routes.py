@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from collections import defaultdict
 from typing import Any, Dict, List
 
@@ -153,6 +154,17 @@ def store_new():
 def store_detail(store_id: str):
     client = get_client()
     store = client.get_entity(store_id)
+    tweets = store.get("tweets")
+    if isinstance(tweets, str):
+        stripped = tweets.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            try:
+                parsed = ast.literal_eval(stripped)
+            except (ValueError, SyntaxError):
+                parsed = None
+            if isinstance(parsed, list):
+                store["tweets"] = [str(tweet) for tweet in parsed]
+
     shelves = [s for s in client.list_entities("Shelf") if s.get("refStore") == store_id]
     products = {p["id"]: p for p in client.list_entities("Product")}
     inventory = [item for item in client.list_entities("InventoryItem") if item.get("refStore") == store_id]
