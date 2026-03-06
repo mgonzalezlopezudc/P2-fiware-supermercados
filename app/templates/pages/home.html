@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Home | FIWARE Markets{% endblock %}
+{% block content %}
+<section class="hero">
+  <h1>Supermarket Chain Control Panel</h1>
+  <p>NGSIv2 + Orion + Flask dashboard with real-time updates and context-provider integration.</p>
+</section>
+<section class="kpis">
+  <article><span>{{ metrics.stores }}</span><small>Stores</small></article>
+  <article><span>{{ metrics.products }}</span><small>Products</small></article>
+  <article><span>{{ metrics.shelves }}</span><small>Shelves</small></article>
+  <article><span>{{ metrics.inventory }}</span><small>Inventory Items</small></article>
+  <article><span>{{ metrics.employees }}</span><small>Employees</small></article>
+</section>
+<section class="uml-card">
+  <h2>Entity UML</h2>
+  <pre class="mermaid">classDiagram
+    class Store {
+      +id
+      +name
+      +address PostalAddress
+      +location geo:json Point
+      +url
+      +telephone
+      +countryCode
+      +capacity
+      +description
+      +temperature
+      +relativeHumidity
+      +tweets
+    }
+    class Product {
+      +id
+      +name
+      +price
+      +size
+      +color
+    }
+    class Shelf {
+      +id
+      +name
+      +location
+      +maxCapacity
+      +refStore
+    }
+    class InventoryItem {
+      +id
+      +refProduct
+      +refStore
+      +refShelf
+      +stockCount
+      +shelfCount
+    }
+    class Employee {
+      +id
+      +name
+      +image
+      +salary
+      +role
+      +refStore
+      +email
+      +dateOfContract
+      +skills
+      +username
+      +password
+    }
+    Store "1" --> "*" Shelf
+    Store "1" --> "*" InventoryItem
+    Product "1" --> "*" InventoryItem
+    Shelf "1" --> "*" InventoryItem
+    Store "1" --> "*" Employee</pre>
+</section>
+{% endblock %}

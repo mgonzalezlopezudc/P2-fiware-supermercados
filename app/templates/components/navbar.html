@@ -1,0 +1,10 @@
+<nav class="main-nav">
+  <a class="brand" href="{{ url_for('main.home') }}">FIWARE Markets</a>
+  <div class="nav-links">
+    <a class="nav-link {% if active == 'home' %}is-active{% endif %}" href="{{ url_for('main.home') }}">Home</a>
+    <a class="nav-link {% if active == 'products' %}is-active{% endif %}" href="{{ url_for('main.products') }}">Products</a>
+    <a class="nav-link {% if active == 'stores' %}is-active{% endif %}" href="{{ url_for('main.stores') }}">Stores</a>
+    <a class="nav-link {% if active == 'employees' %}is-active{% endif %}" href="{{ url_for('main.employees') }}">Employees</a>
+    <a class="nav-link {% if active == 'stores_map' %}is-active{% endif %}" href="{{ url_for('main.stores_map') }}">Stores Map</a>
+  </div>
+</nav>
