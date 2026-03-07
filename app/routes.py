@@ -357,9 +357,20 @@ def api_available_products(shelf_id: str):
 
 def _handle_notification(event_name: str, payload: Dict[str, Any]) -> Response:
     data = payload.get("data", [])
-    current_app.logger.info("Subscription %s received %s items", event_name, len(data))
-    socketio.emit(event_name, {"items": data})
+    normalized = [_normalize_notification_item(item) for item in data if isinstance(item, dict)]
+    current_app.logger.info("Subscription %s received %s items", event_name, len(normalized))
+    socketio.emit(event_name, {"items": normalized}, namespace="/")
     return Response(status=204)
+
+
+def _normalize_notification_item(item: Dict[str, Any]) -> Dict[str, Any]:
+    normalized: Dict[str, Any] = {}
+    for key, value in item.items():
+        if isinstance(value, dict) and "value" in value:
+            normalized[key] = value.get("value")
+            continue
+        normalized[key] = value
+    return normalized
 
 
 @main_bp.route("/subscription/price-change", methods=["POST"])

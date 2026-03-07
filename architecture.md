@@ -15,10 +15,13 @@
 4. UI requests call Flask routes.
 5. Flask routes read/write entities in Orion (`/v2/entities`, `/v2/op/update`, `/v2/entities/<id>/attrs`).
 6. Orion posts notifications to Flask subscription endpoints.
-7. Flask emits Socket.IO events, browser updates relevant widgets/tables without page refresh.
-8. Store detail UI renders weather signals as compact metrics and displays tweets in a full-width panel with responsive 3/2/1 column layout.
-9. Stores map UI renders Leaflet tiles and custom styled markers from server-provided `Store` entities (`location.coordinates`), auto-fitting bounds when multiple stores exist.
-10. If Leaflet is unavailable from the primary CDN, the frontend retries loading from a secondary CDN before showing a map load error message.
+7. Flask normalizes Orion notification entities to key-value payloads and emits Socket.IO events.
+8. Browser consumes Socket.IO events using standard transport negotiation (websocket when available, polling fallback).
+9. Frontend renders global toast notifications for incoming real-time events in any page/tab and updates page-specific widgets when applicable.
+10. Browser loads Socket.IO client (`4.8.1`) from CDN with a valid SRI hash; if this check fails, no real-time event channel is established.
+11. Store detail UI renders weather signals as compact metrics and displays tweets in a full-width panel with responsive 3/2/1 column layout.
+12. Stores map UI renders Leaflet tiles and custom styled markers from server-provided `Store` entities (`location.coordinates`), auto-fitting bounds when multiple stores exist.
+13. If Leaflet is unavailable from the primary CDN, the frontend retries loading from a secondary CDN before showing a map load error message.
 
 ## Main Files
 - `app/fiware.py`: Orion client, NGSI serialization, startup bootstrap.
@@ -30,6 +33,9 @@
 ## Deployment Notes
 - Start dependencies with `./services start`.
 - Run app with `python run.py` (port `5000`).
+- Default Socket.IO async mode is `threading` (compatible with Werkzeug/development runtime).
+- Use `SOCKETIO_ASYNC_MODE=eventlet` only when deploying with an eventlet server runtime.
+- When launched via Flask CLI (`flask run`), the app guards against invalid eventlet usage by forcing `threading` mode.
 - Stop dependencies with `./services stop`.
 - Load baseline entities with `./import-data` after Orion is up.
 

@@ -49,6 +49,15 @@ Purchase action performs:
 ```
 and is blocked when `shelfCount <= 0`.
 
+## Real-time Delivery Dependency
+- `Product` and `InventoryItem` subscription updates are delivered to the browser through Socket.IO.
+- The Socket.IO browser script integrity hash in `app/templates/base.html` must match the CDN asset; otherwise browsers block the script and no notification events are received client-side.
+- The Socket.IO server async mode must match runtime capabilities (`threading` for Werkzeug/dev server, `eventlet` for eventlet runtime).
+- Orion notification entities are normalized server-side to plain key-value payloads before emitting to the browser.
+- Client transport uses Socket.IO negotiation (websocket preferred, polling fallback) to improve multi-tab delivery and runtime compatibility.
+- If app launch happens via Flask CLI (`flask run`), runtime guard forces `threading` when `eventlet` is configured.
+- Incoming real-time events are surfaced to users through global toast messages rendered by frontend code in all pages.
+
 ## Provider Registrations
 - External attributes for `Store` (`temperature`, `relativeHumidity`, `tweets`) are served through Orion registrations scoped by exact store IDs.
 - The app maintains 8 registrations at startup:

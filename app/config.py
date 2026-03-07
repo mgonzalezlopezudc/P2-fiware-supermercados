@@ -10,3 +10,5 @@ class Config:
     FIWARE_SERVICE = os.getenv("FIWARE_SERVICE", "")
     FIWARE_SERVICEPATH = os.getenv("FIWARE_SERVICEPATH", "/")
     AUTO_BOOTSTRAP = os.getenv("AUTO_BOOTSTRAP", "true").lower() == "true"
+    # Use a Werkzeug-compatible default in development. Set to "eventlet" for eventlet deployments.
+    SOCKETIO_ASYNC_MODE = os.getenv("SOCKETIO_ASYNC_MODE", "threading")

@@ -254,7 +254,7 @@ curl -s -o /dev/null -X POST \
   		"refShelf":{"type":"Relationship","value":"urn:ngsi-ld:Shelf:unit001"},
   		"refProduct":{"type":"Relationship","value":"urn:ngsi-ld:Product:001"},
   		"stockCount":{"type":"Integer","value":10000},
-  		"shelfCount":{"type":"Integer","value":50}
+  		"shelfCount":{"type":"Integer","value":5}
   	},
   	{
   		"id":"urn:ngsi-ld:InventoryItem:002","type":"InventoryItem",

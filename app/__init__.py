@@ -1,10 +1,25 @@
+import os
+
 from flask import Flask
 from flask_socketio import SocketIO
 
 from app.config import Config
 from app.fiware import OrionClient, ensure_external_providers, ensure_subscriptions
 
-socketio = SocketIO(async_mode="eventlet", cors_allowed_origins="*")
+socketio = SocketIO(cors_allowed_origins="*")
+
+
+def _resolve_socketio_async_mode(configured_mode: str) -> str:
+    mode = (configured_mode or "").strip().lower()
+    supported_modes = {"threading", "eventlet", "gevent", "gevent_uwsgi"}
+    if mode not in supported_modes:
+        return "threading"
+
+    # `flask run` uses Werkzeug and cannot serve eventlet websocket upgrades.
+    if mode == "eventlet" and os.getenv("FLASK_RUN_FROM_CLI"):
+        return "threading"
+
+    return mode
 
 
 def create_app() -> Flask:
@@ -29,5 +44,15 @@ def create_app() -> Flask:
     from app.routes import main_bp
 
     app.register_blueprint(main_bp)
-    socketio.init_app(app)
+
+    configured_mode = app.config["SOCKETIO_ASYNC_MODE"]
+    resolved_mode = _resolve_socketio_async_mode(configured_mode)
+    if resolved_mode != (configured_mode or "").strip().lower():
+        app.logger.warning(
+            "Socket.IO async mode '%s' adjusted to '%s' for current runtime",
+            configured_mode,
+            resolved_mode,
+        )
+
+    socketio.init_app(app, async_mode=resolved_mode)
     return app

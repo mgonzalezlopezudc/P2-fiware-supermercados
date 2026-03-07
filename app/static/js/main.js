@@ -1,8 +1,50 @@
+function shortEntityId(value) {
+  if (!value || typeof value !== 'string') {
+    return value || '';
+  }
+  const parts = value.split(':');
+  return parts[parts.length - 1] || value;
+}
+
+function ensureToastRoot() {
+  let root = document.querySelector('#global-toast-root');
+  if (root) {
+    return root;
+  }
+
+  root = document.createElement('div');
+  root.id = 'global-toast-root';
+  root.className = 'global-toast-root';
+  root.setAttribute('aria-live', 'polite');
+  root.setAttribute('aria-atomic', 'false');
+  document.body.appendChild(root);
+  return root;
+}
+
+function showToast(message, tone = 'info') {
+  const root = ensureToastRoot();
+  const toast = document.createElement('div');
+  toast.className = `global-toast ${tone}`;
+  toast.textContent = message;
+  root.appendChild(toast);
+
+  window.setTimeout(() => {
+    toast.classList.add('is-hiding');
+    window.setTimeout(() => {
+      toast.remove();
+    }, 220);
+  }, 4500);
+}
+
 function setupSocket() {
   if (typeof io === 'undefined') {
     return;
   }
   const socket = io();
+
+  socket.on('connect_error', (error) => {
+    showToast('Realtime connection issue detected', 'error');
+  });
 
   socket.on('price_change', (payload) => {
     (payload.items || []).forEach((item) => {
@@ -12,16 +54,27 @@ function setupSocket() {
       document.querySelectorAll(`[data-product-id="${productId}"] .js-price, .js-price[data-product-id="${productId}"]`).forEach((node) => {
         node.textContent = price;
       });
+
+      if (productId && price !== undefined) {
+        showToast(`Price updated: product ${shortEntityId(productId)} now ${price}`, 'info');
+      }
     });
   });
 
   ['001', '002', '003', '004'].forEach((code) => {
     socket.on(`low_stock_${code}`, (payload) => {
+      const items = payload.items || [];
+      items.forEach((item) => {
+        const productLabel = shortEntityId(item.refProduct || 'unknown');
+        const shelfLabel = shortEntityId(item.refShelf || 'unknown');
+        showToast(`Low stock in store ${code}: product ${productLabel} on shelf ${shelfLabel} (count=${item.shelfCount})`, 'warning');
+      });
+
       const panel = document.querySelector('#notification-panel');
       if (!panel || panel.dataset.storeId !== code) {
         return;
       }
-      (payload.items || []).forEach((item) => {
+      items.forEach((item) => {
         const li = document.createElement('li');
         li.textContent = `Low stock: ${item.refProduct} on ${item.refShelf} (shelfCount=${item.shelfCount})`;
         panel.prepend(li);

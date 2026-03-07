@@ -19,6 +19,7 @@ FIWARE Supermarkets management web app using Orion NGSIv2 as business data sourc
 - Shelf and inventory management with dynamic filtered selects.
 - Purchase action reducing `shelfCount` and `stockCount` with empty shelf protection.
 - Real-time price and low-stock notifications.
+- Real-time notifications are displayed as global toast messages across pages/tabs, not only as console output.
 - `Stores Map` is implemented with Leaflet + OpenStreetMap tiles, with one marker per store based on NGSI `Store.location` coordinates.
 - Leaflet map popups include store name, locality, and direct link to the store detail page.
 - Store markers use a custom branded visual style to improve map readability.
@@ -31,5 +32,10 @@ FIWARE Supermarkets management web app using Orion NGSIv2 as business data sourc
 ## Non-functional Requirements
 - Flask + Jinja2 + plain HTML/CSS/JS.
 - Orion NGSIv2 APIs for all entity persistence.
+- Socket.IO browser client must load successfully (CDN script with valid SRI hash) so real-time notifications can reach the UI.
+- Socket.IO server async mode must be compatible with the selected web server runtime (`threading` for Werkzeug/dev, `eventlet` for eventlet server deployments).
+- Notification payloads received from Orion must be normalized into plain values before broadcasting to browser clients.
+- App startup must guard against invalid runtime/mode combinations (for example `eventlet` configured while running through `flask run`) and fall back to a compatible mode.
+- Development/debug runtime must preserve stable multi-tab real-time delivery (prefer direct `run.py` launch over Flask CLI wrappers).
 - Clean, modern 'minimalist light' interface built with vanilla CSS (glassmorphism, subtle shadows, high contrast).
 - Infrastructure lifecycle via `./services start` and `./services stop`.
