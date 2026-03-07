@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}{{ 'Edit Store' if store else 'New Store' }}{% endblock %}
+{% block title %}{{ _('Edit Store') if store else _('New Store') }}{% endblock %}
 {% block content %}
-<section class="page-head"><h1>{{ 'Edit Store' if store else 'New Store' }}</h1></section>
+<section class="page-head"><h1>{{ _('Edit Store') if store else _('New Store') }}</h1></section>
 <form class="grid-form" method="post" novalidate>
-  <label>Name<input type="text" name="name" required value="{{ store.name if store else '' }}"></label>
-  <label>Street Address<input type="text" name="streetAddress" required value="{{ store.address.streetAddress if store and store.address else '' }}"></label>
-  <label>Region<input type="text" name="addressRegion" required value="{{ store.address.addressRegion if store and store.address else '' }}"></label>
-  <label>Locality<input type="text" name="addressLocality" required value="{{ store.address.addressLocality if store and store.address else '' }}"></label>
-  <label>Postal Code<input type="text" name="postalCode" required value="{{ store.address.postalCode if store and store.address else '' }}"></label>
-  <label>Longitude<input type="number" step="0.000001" name="longitude" required value="{{ store.location.coordinates[0] if store and store.location else '' }}"></label>
-  <label>Latitude<input type="number" step="0.000001" name="latitude" required value="{{ store.location.coordinates[1] if store and store.location else '' }}"></label>
-  <label>URL<input type="url" name="url" required value="{{ store.url if store else '' }}"></label>
-  <label>Telephone<input type="tel" name="telephone" required value="{{ store.telephone if store else '' }}"></label>
-  <label>Country Code<input type="text" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" name="countryCode" required value="{{ store.countryCode if store else '' }}"></label>
-  <label>Capacity (m3)<input type="number" min="1" step="0.1" name="capacity" required value="{{ store.capacity if store else '' }}"></label>
-  <label class="full">Description<textarea name="description" required>{{ store.description if store else '' }}</textarea></label>
-  <label>Image URL<input type="url" name="image" value="{{ store.image if store else '' }}"></label>
+  <label>{{ _('Name') }}<input type="text" name="name" required value="{{ store.name if store else '' }}"></label>
+  <label>{{ _('Street Address') }}<input type="text" name="streetAddress" required value="{{ store.address.streetAddress if store and store.address else '' }}"></label>
+  <label>{{ _('Region') }}<input type="text" name="addressRegion" required value="{{ store.address.addressRegion if store and store.address else '' }}"></label>
+  <label>{{ _('Locality') }}<input type="text" name="addressLocality" required value="{{ store.address.addressLocality if store and store.address else '' }}"></label>
+  <label>{{ _('Postal Code') }}<input type="text" name="postalCode" required value="{{ store.address.postalCode if store and store.address else '' }}"></label>
+  <label>{{ _('Longitude') }}<input type="number" step="0.000001" name="longitude" required value="{{ store.location.coordinates[0] if store and store.location else '' }}"></label>
+  <label>{{ _('Latitude') }}<input type="number" step="0.000001" name="latitude" required value="{{ store.location.coordinates[1] if store and store.location else '' }}"></label>
+  <label>{{ _('URL') }}<input type="url" name="url" required value="{{ store.url if store else '' }}"></label>
+  <label>{{ _('Telephone') }}<input type="tel" name="telephone" required value="{{ store.telephone if store else '' }}"></label>
+  <label>{{ _('Country Code') }}<input type="text" maxlength="2" minlength="2" pattern="[A-Za-z]{2}" name="countryCode" required value="{{ store.countryCode if store else '' }}"></label>
+  <label>{{ _('Capacity (m3)') }}<input type="number" min="1" step="0.1" name="capacity" required value="{{ store.capacity if store else '' }}"></label>
+  <label class="full">{{ _('Description') }}<textarea name="description" required>{{ store.description if store else '' }}</textarea></label>
+  <label>{{ _('Image URL') }}<input type="url" name="image" value="{{ store.image if store else '' }}"></label>
   <div class="form-actions">
-    <button class="btn" type="submit">Save</button>
-    <a class="btn ghost" href="{{ url_for('main.stores') }}">Cancel</a>
+    <button class="btn" type="submit">{{ _('Save') }}</button>
+    <a class="btn ghost" href="{{ url_for('main.stores') }}">{{ _('Cancel') }}</a>
   </div>
 </form>
 {% endblock %}

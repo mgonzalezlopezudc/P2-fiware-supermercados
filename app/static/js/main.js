@@ -1,3 +1,13 @@
+const I18N = window.I18N || {};
+
+function t(key, params = {}) {
+  const template = I18N[key] || key;
+  return Object.entries(params).reduce(
+    (acc, [name, value]) => acc.replaceAll(`{${name}}`, String(value)),
+    String(template),
+  );
+}
+
 function shortEntityId(value) {
   if (!value || typeof value !== 'string') {
     return value || '';
@@ -42,8 +52,8 @@ function setupSocket() {
   }
   const socket = io();
 
-  socket.on('connect_error', (error) => {
-    showToast('Realtime connection issue detected', 'error');
+  socket.on('connect_error', () => {
+    showToast(t('realtime_connection_issue'), 'error');
   });
 
   socket.on('price_change', (payload) => {
@@ -51,12 +61,17 @@ function setupSocket() {
       const productId = item.id;
       const price = item.price;
 
-      document.querySelectorAll(`[data-product-id="${productId}"] .js-price, .js-price[data-product-id="${productId}"]`).forEach((node) => {
-        node.textContent = price;
-      });
+      document
+        .querySelectorAll(`[data-product-id="${productId}"] .js-price, .js-price[data-product-id="${productId}"]`)
+        .forEach((node) => {
+          node.textContent = price;
+        });
 
       if (productId && price !== undefined) {
-        showToast(`Price updated: product ${shortEntityId(productId)} now ${price}`, 'info');
+        showToast(
+          t('price_updated', { product_id: shortEntityId(productId), price }),
+          'info',
+        );
       }
     });
   });
@@ -65,9 +80,17 @@ function setupSocket() {
     socket.on(`low_stock_${code}`, (payload) => {
       const items = payload.items || [];
       items.forEach((item) => {
-        const productLabel = shortEntityId(item.refProduct || 'unknown');
-        const shelfLabel = shortEntityId(item.refShelf || 'unknown');
-        showToast(`Low stock in store ${code}: product ${productLabel} on shelf ${shelfLabel} (count=${item.shelfCount})`, 'warning');
+        const productLabel = shortEntityId(item.refProduct || t('unknown'));
+        const shelfLabel = shortEntityId(item.refShelf || t('unknown'));
+        showToast(
+          t('low_stock', {
+            store_code: code,
+            product_label: productLabel,
+            shelf_label: shelfLabel,
+            count: item.shelfCount,
+          }),
+          'warning',
+        );
       });
 
       const panel = document.querySelector('#notification-panel');
@@ -76,7 +99,11 @@ function setupSocket() {
       }
       items.forEach((item) => {
         const li = document.createElement('li');
-        li.textContent = `Low stock: ${item.refProduct} on ${item.refShelf} (shelfCount=${item.shelfCount})`;
+        li.textContent = t('low_stock_panel', {
+          product: shortEntityId(item.refProduct || t('unknown')),
+          shelf: shortEntityId(item.refShelf || t('unknown')),
+          count: item.shelfCount,
+        });
         panel.prepend(li);
       });
     });
@@ -86,11 +113,16 @@ function setupSocket() {
 async function fillAvailableShelves(select) {
   const storeId = select.dataset.storeId;
   const productId = select.dataset.productId;
-  const response = await fetch(`/api/stores/${encodeURIComponent(storeId)}/available-shelves?product_id=${encodeURIComponent(productId)}`);
+  const response = await fetch(
+    `/api/stores/${encodeURIComponent(storeId)}/available-shelves?product_id=${encodeURIComponent(productId)}`,
+  );
   const items = await response.json();
   select.innerHTML = '';
   if (!items.length) {
-    select.innerHTML = '<option value="">No available shelf</option>';
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = t('no_available_shelf');
+    select.appendChild(option);
     return;
   }
   items.forEach((shelf) => {
@@ -107,7 +139,10 @@ async function fillAvailableProducts(select) {
   const items = await response.json();
   select.innerHTML = '';
   if (!items.length) {
-    select.innerHTML = '<option value="">No available product</option>';
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = t('no_available_product');
+    select.appendChild(option);
     return;
   }
   items.forEach((product) => {
@@ -242,7 +277,7 @@ function renderStoresLeafletMap(mapNode, stores) {
 
     const popup = document.createElement('div');
     const title = document.createElement('strong');
-    title.textContent = store.name || 'Store';
+    title.textContent = store.name || t('store_fallback');
     popup.appendChild(title);
 
     if (store?.address?.addressLocality) {
@@ -255,7 +290,7 @@ function renderStoresLeafletMap(mapNode, stores) {
     popup.appendChild(document.createElement('br'));
     const link = document.createElement('a');
     link.href = detailUrl;
-    link.textContent = 'View details';
+    link.textContent = t('view_details');
     popup.appendChild(link);
 
     marker.bindPopup(popup);
@@ -290,13 +325,13 @@ async function setupStoresLeafletMap() {
   try {
     stores = JSON.parse(storesNode.textContent || '[]');
   } catch (error) {
-    console.error('Cannot parse stores map payload', error);
+    console.error(t('map_payload_parse_error'), error);
     return;
   }
 
   const loaded = await ensureLeafletLoaded();
   if (!loaded || typeof L === 'undefined') {
-    mapNode.innerHTML = '<p class="map-load-error">Map cannot be loaded right now. Please check your network and reload the page.</p>';
+    mapNode.innerHTML = `<p class="map-load-error">${t('map_load_error')}</p>`;
     return;
   }
 

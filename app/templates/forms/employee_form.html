@@ -1,27 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}{{ 'Edit Employee' if employee else 'New Employee' }}{% endblock %}
+{% block title %}{{ _('Edit Employee') if employee else _('New Employee') }}{% endblock %}
 {% block content %}
-<section class="page-head"><h1>{{ 'Edit Employee' if employee else 'New Employee' }}</h1></section>
+<section class="page-head"><h1>{{ _('Edit Employee') if employee else _('New Employee') }}</h1></section>
 <form class="grid-form" method="post" novalidate>
-  <label>Name<input type="text" name="name" required value="{{ employee.name if employee else '' }}"></label>
-  <label>Image URL<input type="url" name="image" required value="{{ employee.image if employee else '' }}"></label>
-  <label>Salary<input type="number" min="0" step="0.01" name="salary" required value="{{ employee.salary if employee else '' }}"></label>
-  <label>Role<input type="text" name="role" required value="{{ employee.role if employee else '' }}"></label>
-  <label>Store
+  <label>{{ _('Name') }}<input type="text" name="name" required value="{{ employee.name if employee else '' }}"></label>
+  <label>{{ _('Image URL') }}<input type="url" name="image" required value="{{ employee.image if employee else '' }}"></label>
+  <label>{{ _('Salary') }}<input type="number" min="0" step="0.01" name="salary" required value="{{ employee.salary if employee else '' }}"></label>
+  <label>{{ _('Role') }}<input type="text" name="role" required value="{{ employee.role if employee else '' }}"></label>
+  <label>{{ _('Store') }}
     <select name="refStore" required>
       {% for store in stores %}
       <option value="{{ store.id }}" {% if employee and employee.refStore == store.id %}selected{% endif %}>{{ store.name }}</option>
       {% endfor %}
     </select>
   </label>
-  <label>Email<input type="email" name="email" required value="{{ employee.email if employee else '' }}"></label>
-  <label>Date of Contract<input type="date" name="dateOfContract" required value="{{ employee.dateOfContract if employee else '' }}"></label>
-  <label>Skills (comma separated)<input type="text" name="skills" required value="{{ employee.skills|join(', ') if employee and employee.skills is iterable and employee.skills is not string else (employee.skills if employee else '') }}"></label>
-  <label>Username<input type="text" name="username" required minlength="3" value="{{ employee.username if employee else '' }}"></label>
-  <label>Password<input type="password" name="password" required minlength="6" value="{{ employee.password if employee else '' }}"></label>
+  <label>{{ _('Email') }}<input type="email" name="email" required value="{{ employee.email if employee else '' }}"></label>
+  <label>{{ _('Date of Contract') }}<input type="date" name="dateOfContract" required value="{{ employee.dateOfContract if employee else '' }}"></label>
+  <label>{{ _('Skills (comma separated)') }}<input type="text" name="skills" required value="{{ employee.skills|join(', ') if employee and employee.skills is iterable and employee.skills is not string else (employee.skills if employee else '') }}"></label>
+  <label>{{ _('Username') }}<input type="text" name="username" required minlength="3" value="{{ employee.username if employee else '' }}"></label>
+  <label>{{ _('Password') }}<input type="password" name="password" required minlength="6" value="{{ employee.password if employee else '' }}"></label>
   <div class="form-actions">
-    <button class="btn" type="submit">Save</button>
-    <a class="btn ghost" href="{{ url_for('main.employees') }}">Cancel</a>
+    <button class="btn" type="submit">{{ _('Save') }}</button>
+    <a class="btn ghost" href="{{ url_for('main.employees') }}">{{ _('Cancel') }}</a>
   </div>
 </form>
 {% endblock %}

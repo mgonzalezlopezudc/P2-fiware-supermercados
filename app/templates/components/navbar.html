@@ -1,10 +1,20 @@
 <nav class="main-nav">
-  <a class="brand" href="{{ url_for('main.home') }}">FIWARE Markets</a>
+  <a class="brand" href="{{ url_for('main.home') }}">{{ _('FIWARE Markets') }}</a>
   <div class="nav-links">
-    <a class="nav-link {% if active == 'home' %}is-active{% endif %}" href="{{ url_for('main.home') }}">Home</a>
-    <a class="nav-link {% if active == 'products' %}is-active{% endif %}" href="{{ url_for('main.products') }}">Products</a>
-    <a class="nav-link {% if active == 'stores' %}is-active{% endif %}" href="{{ url_for('main.stores') }}">Stores</a>
-    <a class="nav-link {% if active == 'employees' %}is-active{% endif %}" href="{{ url_for('main.employees') }}">Employees</a>
-    <a class="nav-link {% if active == 'stores_map' %}is-active{% endif %}" href="{{ url_for('main.stores_map') }}">Stores Map</a>
+    <a class="nav-link {% if active == 'home' %}is-active{% endif %}" href="{{ url_for('main.home') }}">{{ _('Home') }}</a>
+    <a class="nav-link {% if active == 'products' %}is-active{% endif %}" href="{{ url_for('main.products') }}">{{ _('Products') }}</a>
+    <a class="nav-link {% if active == 'stores' %}is-active{% endif %}" href="{{ url_for('main.stores') }}">{{ _('Stores') }}</a>
+    <a class="nav-link {% if active == 'employees' %}is-active{% endif %}" href="{{ url_for('main.employees') }}">{{ _('Employees') }}</a>
+    <a class="nav-link {% if active == 'stores_map' %}is-active{% endif %}" href="{{ url_for('main.stores_map') }}">{{ _('Stores Map') }}</a>
   </div>
+  <form class="lang-switcher" action="{{ url_for('main.set_language') }}" method="post">
+    <input type="hidden" name="next" value="{{ request.full_path if request.query_string else request.path }}">
+    <label for="lang-select" class="visually-hidden">{{ _('Language') }}</label>
+    <select id="lang-select" name="lang" onchange="this.form.submit()" aria-label="{{ _('Language') }}">
+      {% for locale in supported_locales %}
+      <option value="{{ locale }}" {% if locale == current_locale %}selected{% endif %}>{{ locale|upper }}</option>
+      {% endfor %}
+    </select>
+    <noscript><button class="btn ghost" type="submit">{{ _('Apply') }}</button></noscript>
+  </form>
 </nav>

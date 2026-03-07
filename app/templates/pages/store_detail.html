@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Store Detail | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Store Detail') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block content %}
 <section class="page-head">
   <h1>{{ store.name }}</h1>
@@ -9,15 +9,15 @@
   <div class="signal temp metric">
     <i class="fa-solid fa-temperature-three-quarters"></i>
     <div>
-      <small>Temperature</small>
-      <strong>{{ store.temperature or 'N/A' }}</strong>
+      <small>{{ _('Temperature') }}</small>
+      <strong>{{ store.temperature or _('N/A') }}</strong>
     </div>
   </div>
   <div class="signal humidity metric">
     <i class="fa-solid fa-droplet"></i>
     <div>
-      <small>Humidity</small>
-      <strong>{{ store.relativeHumidity or 'N/A' }}</strong>
+      <small>{{ _('Humidity') }}</small>
+      <strong>{{ store.relativeHumidity or _('N/A') }}</strong>
     </div>
   </div>
   <div class="signal tweets">
@@ -32,13 +32,13 @@
       {% elif store.tweets %}
       <p class="tweets-text">{{ store.tweets }}</p>
       {% else %}
-      <p class="tweets-text">No tweets</p>
+      <p class="tweets-text">{{ _('No tweets') }}</p>
       {% endif %}
     </div>
   </div>
 </section>
 <section class="card">
-  <h3>Notifications</h3>
+  <h3>{{ _('Notifications') }}</h3>
   <ul id="notification-panel" class="notif-list" data-store-id="{{ store.id | short_id }}"></ul>
 </section>
 {% for row in shelf_rows %}
@@ -46,7 +46,7 @@
   <h3>{{ row.shelf.name }} <small>{{ row.current }}/{{ row.max }}</small></h3>
   <div class="progress"><span class="progress-bar" data-progress="{{ row.progress }}"></span></div>
   <table>
-    <thead><tr><th>Product</th><th>Price</th><th>Size</th><th>Color</th><th>Stock</th><th>Shelf</th><th>Buy</th></tr></thead>
+    <thead><tr><th>{{ _('Product') }}</th><th>{{ _('Price') }}</th><th>{{ _('Size') }}</th><th>{{ _('Color') }}</th><th>{{ _('Stock') }}</th><th>{{ _('Shelf') }}</th><th>{{ _('Buy') }}</th></tr></thead>
     <tbody>
       {% for item in row['items'] %}
       <tr>
@@ -58,7 +58,7 @@
         <td>{{ item.inventory.shelfCount }}</td>
         <td>
           <form method="post" action="{{ url_for('main.buy_inventory_item', inventory_id=item.inventory.id) }}">
-            <button class="btn" type="submit" {% if item.inventory.shelfCount|int <= 0 %}disabled{% endif %}>Buy 1</button>
+            <button class="btn" type="submit" {% if item.inventory.shelfCount|int <= 0 %}disabled{% endif %}>{{ _('Buy 1') }}</button>
           </form>
         </td>
       </tr>
@@ -69,24 +69,24 @@
     <input type="hidden" name="redirectTo" value="store">
     <input type="hidden" name="refStore" value="{{ store.id }}">
     <input type="hidden" name="refShelf" value="{{ row.shelf.id }}">
-    <label>Add product not present in this shelf
+    <label>{{ _('Add product not present in this shelf') }}
       <select name="refProduct" class="js-available-products" data-shelf-id="{{ row.shelf.id }}" required></select>
     </label>
-    <label>Shelf Count<input type="number" name="shelfCount" min="1" required value="10"></label>
-    <label>Stock Count<input type="number" name="stockCount" min="1" required value="100"></label>
-    <button class="btn" type="submit">Add Inventory</button>
+    <label>{{ _('Shelf Count') }}<input type="number" name="shelfCount" min="1" required value="10"></label>
+    <label>{{ _('Stock Count') }}<input type="number" name="stockCount" min="1" required value="100"></label>
+    <button class="btn" type="submit">{{ _('Add Inventory') }}</button>
   </form>
 </section>
 {% endfor %}
 <section class="card">
-  <h3>New Shelf</h3>
+  <h3>{{ _('New Shelf') }}</h3>
   <form class="grid-form compact" method="post" action="{{ url_for('main.shelf_new') }}">
     <input type="hidden" name="refStore" value="{{ store.id }}">
-    <label>Name<input type="text" name="name" required></label>
-    <label>Longitude<input type="number" step="0.000001" name="longitude" required></label>
-    <label>Latitude<input type="number" step="0.000001" name="latitude" required></label>
-    <label>Max Capacity<input type="number" name="maxCapacity" min="1" required></label>
-    <button class="btn" type="submit">Create Shelf</button>
+    <label>{{ _('Name') }}<input type="text" name="name" required></label>
+    <label>{{ _('Longitude') }}<input type="number" step="0.000001" name="longitude" required></label>
+    <label>{{ _('Latitude') }}<input type="number" step="0.000001" name="latitude" required></label>
+    <label>{{ _('Max Capacity') }}<input type="number" name="maxCapacity" min="1" required></label>
+    <button class="btn" type="submit">{{ _('Create Shelf') }}</button>
   </form>
 </section>
 {% endblock %}

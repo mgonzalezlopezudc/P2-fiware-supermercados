@@ -1,68 +1,100 @@
 # Data Model (NGSIv2)
 
+## Localization boundary
+- Entity attributes and identifier values stored in Orion are canonical business data and are not translated.
+- UI labels, navigation text, flash messages, and frontend notifications are localized (`es`/`en`) at presentation layer.
+- Relationship fields (`refStore`, `refShelf`, `refProduct`) and entity IDs remain unchanged across locales.
+
+## Naming and IDs
+- Entity IDs use URN-like prefixes:
+- `urn:ngsi-ld:Store:*`
+- `urn:ngsi-ld:Product:*`
+- `urn:ngsi-ld:Shelf:*`
+- `urn:ngsi-ld:InventoryItem:*`
+- `urn:ngsi-ld:Employee:*`
+
 ## Store
-- `id`
-- `name`
-- `address` (`PostalAddress` object with `streetAddress`, `addressRegion`, `addressLocality`, `postalCode`)
-- `location` (`geo:json` `Point` with `[lon, lat]`)
-- `url`
-- `telephone`
-- `countryCode`
-- `capacity`
-- `description`
+- `id` (`Text`)
+- `name` (`Text`)
+- `address` (`PostalAddress`):
+- `streetAddress`, `addressRegion`, `addressLocality`, `postalCode`
+- `location` (`geo:json` Point): `coordinates = [lon, lat]`
+- `url` (`Text`)
+- `telephone` (`Text`)
+- `countryCode` (`Text`, 2 letters in form validation)
+- `capacity` (`Number`)
+- `description` (`Text`)
+- `image` (`Text`, URL string)
+- Provider-managed attrs:
 - `temperature`
 - `relativeHumidity`
 - `tweets`
-- `image` (URL)
 
-Presentation usage:
-- `location.coordinates` (`[lon, lat]`) feeds Leaflet marker positions in `Stores Map`.
-- Store marker popups expose `name`, optional `address.addressLocality`, and a detail-page link.
-- If Leaflet assets cannot be loaded from CDN, the UI shows an explicit map load error message instead of a blank area.
+UI usage:
+- `location.coordinates` powers map markers in `Stores Map`.
+- Store detail renders temperature/humidity metrics and tweets content.
 
 ## Product
-- `id`, `name`, `price`, `size`, `color`
-- `color` format: `#RRGGBB`
-- `image` (URL)
+- `id` (`Text`)
+- `name` (`Text`)
+- `price` (`Number`)
+- `size` (`Text`, UI options `XS|S|M|L|XL`)
+- `color` (`Text`, form pattern `#RRGGBB`)
+- `image` (`Text`, URL string)
 
 ## Shelf
-- `id`, `name`, `location`, `maxCapacity`, `refStore`
+- `id` (`Text`)
+- `name` (`Text`)
+- `location` (`geo:json` Point)
+- `maxCapacity` (`Integer`)
+- `refStore` (`Relationship`, Store ID)
 
 ## InventoryItem
-- `id`, `refProduct`, `refStore`, `refShelf`, `stockCount`, `shelfCount`
+- `id` (`Text`)
+- `refProduct` (`Relationship`, Product ID)
+- `refStore` (`Relationship`, Store ID)
+- `refShelf` (`Relationship`, Shelf ID)
+- `stockCount` (`Integer`)
+- `shelfCount` (`Integer`)
 
 ## Employee
-- `id`, `name`, `image`, `salary`, `role`, `refStore`, `email`, `dateOfContract`, `skills`, `username`, `password`
+- `id` (`Text`)
+- `name` (`Text`)
+- `image` (`Text`, URL string)
+- `salary` (`Number`)
+- `role` (`Text`)
+- `refStore` (`Relationship`, Store ID)
+- `email` (`Text`)
+- `dateOfContract` (`Date`)
+- `skills` (`StructuredValue`, array of strings)
+- `username` (`Text`)
+- `password` (`Text`)
 
-## Seed Dataset
-- `import-data` populates all mandatory attributes for `Store`, `Product`, `Shelf`, `InventoryItem`, and `Employee`.
-- `import-data` intentionally omits provider-managed `Store` attributes (`temperature`, `relativeHumidity`, `tweets`), which are supplied at query time by Orion context providers.
-- Seed includes 4 employees (one per store) and meaningful free-to-use image URLs for store, product, and employee entities.
-
-## Business Rule
-Purchase action performs:
+## Derived constraints and business rules
+- Purchase operation updates Orion with:
 ```json
 {
   "shelfCount": {"type": "Integer", "value": {"$inc": -1}},
   "stockCount": {"type": "Integer", "value": {"$inc": -1}}
 }
 ```
-and is blocked when `shelfCount <= 0`.
+- Purchase is rejected when `shelfCount <= 0`.
+- Dynamic assignment APIs enforce one inventory relation per product/shelf combination in context:
+- Available shelves for a given `store + product`.
+- Available products for a given shelf.
 
-## Real-time Delivery Dependency
-- `Product` and `InventoryItem` subscription updates are delivered to the browser through Socket.IO.
-- The Socket.IO browser script integrity hash in `app/templates/base.html` must match the CDN asset; otherwise browsers block the script and no notification events are received client-side.
-- The Socket.IO server async mode must match runtime capabilities (`threading` for Werkzeug/dev server, `eventlet` for eventlet runtime).
-- Orion notification entities are normalized server-side to plain key-value payloads before emitting to the browser.
-- Client transport uses Socket.IO negotiation (websocket preferred, polling fallback) to improve multi-tab delivery and runtime compatibility.
-- If app launch happens via Flask CLI (`flask run`), runtime guard forces `threading` when `eventlet` is configured.
-- Incoming real-time events are surfaced to users through global toast messages rendered by frontend code in all pages.
+## Real-time event payload model
+- Orion callbacks are normalized to flat key-value objects before socket emit.
+- Socket events delivered to clients:
+- `price_change` with product item list.
+- `low_stock_001`, `low_stock_002`, `low_stock_003`, `low_stock_004` with inventory item list.
 
-## Provider Registrations
-- External attributes for `Store` (`temperature`, `relativeHumidity`, `tweets`) are served through Orion registrations scoped by exact store IDs.
-- The app maintains 8 registrations at startup:
-  - weather provider for `urn:ngsi-ld:Store:001`, `002`, `003`, `004`
-  - tweets provider for `urn:ngsi-ld:Store:001`, `002`, `003`, `004`
-- Wildcard registrations using `idPattern: ".*"` are considered legacy and are removed by bootstrap.
-- In the store detail page, `temperature` and `relativeHumidity` are displayed as metric cards, while `tweets` is rendered in a full-width content block.
-- Tweets are rendered in responsive columns (desktop/tablet/mobile: 3/2/1).
+## Provider registration model
+- On bootstrap, app maintains 8 registrations (weather + tweets for store codes `001` to `004`).
+- Registration scope is exact entity IDs (not wildcard patterns).
+- Legacy generic registration descriptions are removed when found.
+
+## Seed dataset (`import-data`)
+- Seeds baseline `Store`, `Shelf`, `Product`, `InventoryItem`, and `Employee` entities.
+- Includes 4 employees (one per store).
+- Store external attrs (`temperature`, `relativeHumidity`, `tweets`) are not seeded and are expected from context providers.

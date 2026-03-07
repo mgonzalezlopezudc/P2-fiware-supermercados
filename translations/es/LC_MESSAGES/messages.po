@@ -1,0 +1,321 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FIWARE Supermarkets\n"
+"POT-Creation-Date: 2026-03-07 00:00+0000\n"
+"PO-Revision-Date: 2026-03-07 00:00+0000\n"
+"Last-Translator: GitHub Copilot\n"
+"Language: es\n"
+"Language-Team: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "FIWARE Supermarkets"
+msgstr "Supermercados FIWARE"
+
+msgid "FIWARE Markets"
+msgstr "Mercados FIWARE"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Products"
+msgstr "Productos"
+
+msgid "Stores"
+msgstr "Tiendas"
+
+msgid "Employees"
+msgstr "Empleados"
+
+msgid "Stores Map"
+msgstr "Mapa de tiendas"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Image"
+msgstr "Imagen"
+
+msgid "Photo"
+msgstr "Foto"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Price"
+msgstr "Precio"
+
+msgid "Size"
+msgstr "Talla"
+
+msgid "Color"
+msgstr "Color"
+
+msgid "N/A"
+msgstr "N/D"
+
+msgid "New Product"
+msgstr "Nuevo producto"
+
+msgid "Edit Product"
+msgstr "Editar producto"
+
+msgid "Product Detail"
+msgstr "Detalle del producto"
+
+msgid "Delete product?"
+msgstr "¿Eliminar producto?"
+
+msgid "Add to shelf in this store"
+msgstr "Agregar a una estanteria de esta tienda"
+
+msgid "Shelf"
+msgstr "Estanteria"
+
+msgid "Shelf Count"
+msgstr "Cantidad en estanteria"
+
+msgid "Stock Count"
+msgstr "Cantidad en stock"
+
+msgid "Total shelf stock"
+msgstr "Total en estanteria"
+
+msgid "Add Inventory"
+msgstr "Agregar inventario"
+
+msgid "New Store"
+msgstr "Nueva tienda"
+
+msgid "Edit Store"
+msgstr "Editar tienda"
+
+msgid "Store Detail"
+msgstr "Detalle de tienda"
+
+msgid "Delete store?"
+msgstr "¿Eliminar tienda?"
+
+msgid "Country"
+msgstr "Pais"
+
+msgid "Temp"
+msgstr "Temp"
+
+msgid "Humidity"
+msgstr "Humedad"
+
+msgid "Temperature"
+msgstr "Temperatura"
+
+msgid "No tweets"
+msgstr "Sin tweets"
+
+msgid "Notifications"
+msgstr "Notificaciones"
+
+msgid "Product"
+msgstr "Producto"
+
+msgid "Stock"
+msgstr "Stock"
+
+msgid "Buy"
+msgstr "Comprar"
+
+msgid "Buy 1"
+msgstr "Comprar 1"
+
+msgid "Add product not present in this shelf"
+msgstr "Agregar producto no presente en esta estanteria"
+
+msgid "New Shelf"
+msgstr "Nueva estanteria"
+
+msgid "Longitude"
+msgstr "Longitud"
+
+msgid "Latitude"
+msgstr "Latitud"
+
+msgid "Max Capacity"
+msgstr "Capacidad maxima"
+
+msgid "Create Shelf"
+msgstr "Crear estanteria"
+
+msgid "New Employee"
+msgstr "Nuevo empleado"
+
+msgid "Edit Employee"
+msgstr "Editar empleado"
+
+msgid "Delete employee?"
+msgstr "¿Eliminar empleado?"
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Skills"
+msgstr "Habilidades"
+
+msgid "Salary"
+msgstr "Salario"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Date of Contract"
+msgstr "Fecha de contrato"
+
+msgid "Skills (comma separated)"
+msgstr "Habilidades (separadas por coma)"
+
+msgid "Username"
+msgstr "Usuario"
+
+msgid "Password"
+msgstr "Contrasena"
+
+msgid "Street Address"
+msgstr "Direccion"
+
+msgid "Region"
+msgstr "Region"
+
+msgid "Locality"
+msgstr "Localidad"
+
+msgid "Postal Code"
+msgstr "Codigo postal"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "Telephone"
+msgstr "Telefono"
+
+msgid "Country Code"
+msgstr "Codigo de pais"
+
+msgid "Capacity (m3)"
+msgstr "Capacidad (m3)"
+
+msgid "Description"
+msgstr "Descripcion"
+
+msgid "Image URL"
+msgstr "URL de imagen"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Supermarket Chain Control Panel"
+msgstr "Panel de control de cadena de supermercados"
+
+msgid "NGSIv2 + Orion + Flask dashboard with real-time updates and context-provider integration."
+msgstr "Panel NGSIv2 + Orion + Flask con actualizaciones en tiempo real e integracion con proveedores de contexto."
+
+msgid "Shelves"
+msgstr "Estanterias"
+
+msgid "Inventory Items"
+msgstr "Elementos de inventario"
+
+msgid "Entity UML"
+msgstr "UML de entidades"
+
+msgid "Interactive stores map"
+msgstr "Mapa interactivo de tiendas"
+
+msgid "Product created"
+msgstr "Producto creado"
+
+msgid "Product updated"
+msgstr "Producto actualizado"
+
+msgid "Product deleted"
+msgstr "Producto eliminado"
+
+msgid "Store created"
+msgstr "Tienda creada"
+
+msgid "Store updated"
+msgstr "Tienda actualizada"
+
+msgid "Store deleted"
+msgstr "Tienda eliminada"
+
+msgid "Employee created"
+msgstr "Empleado creado"
+
+msgid "Employee updated"
+msgstr "Empleado actualizado"
+
+msgid "Employee deleted"
+msgstr "Empleado eliminado"
+
+msgid "Shelf created"
+msgstr "Estanteria creada"
+
+msgid "Shelf updated"
+msgstr "Estanteria actualizada"
+
+msgid "Inventory item created"
+msgstr "Elemento de inventario creado"
+
+msgid "Purchase blocked: shelf stock is empty"
+msgstr "Compra bloqueada: la estanteria esta vacia"
+
+msgid "One unit purchased"
+msgstr "Una unidad comprada"
+
+msgid "Realtime connection issue detected"
+msgstr "Se detecto un problema con la conexion en tiempo real"
+
+msgid "Price updated: product {product_id} now {price}"
+msgstr "Precio actualizado: producto {product_id} ahora {price}"
+
+msgid "Low stock in store {store_code}: product {product_label} on shelf {shelf_label} (count={count})"
+msgstr "Stock bajo en tienda {store_code}: producto {product_label} en estanteria {shelf_label} (cantidad={count})"
+
+msgid "Low stock: {product} on {shelf} (shelfCount={count})"
+msgstr "Stock bajo: {product} en {shelf} (cantidad={count})"
+
+msgid "No available shelf"
+msgstr "No hay estanteria disponible"
+
+msgid "No available product"
+msgstr "No hay producto disponible"
+
+msgid "unknown"
+msgstr "desconocido"
+
+msgid "Store"
+msgstr "Tienda"
+
+msgid "View details"
+msgstr "Ver detalles"
+
+msgid "Cannot parse stores map payload"
+msgstr "No se puede procesar la carga del mapa de tiendas"
+
+msgid "Map cannot be loaded right now. Please check your network and reload the page."
+msgstr "No se puede cargar el mapa ahora. Revisa tu red y recarga la pagina."

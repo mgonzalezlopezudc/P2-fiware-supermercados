@@ -3,8 +3,10 @@ from __future__ import annotations
 import ast
 from collections import defaultdict
 from typing import Any, Dict, List
+from urllib.parse import urlparse
 
-from flask import Blueprint, Response, current_app, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, Response, current_app, flash, jsonify, redirect, render_template, request, session, url_for
+from flask_babel import gettext as _
 
 from app import socketio
 from app.fiware import (
@@ -41,6 +43,33 @@ def short_id(value: str) -> str:
 
 def get_client() -> OrionClient:
     return current_app.extensions["orion_client"]
+
+
+def _is_safe_redirect_url(target: str) -> bool:
+    if not target:
+        return False
+    parsed = urlparse(target)
+    return parsed.scheme == "" and parsed.netloc == ""
+
+
+@main_bp.route("/set-language", methods=["POST"])
+def set_language():
+    locale = (request.form.get("lang") or "").strip().lower()
+    supported = current_app.config.get("LANGUAGES", ["es", "en"])
+    if locale not in supported:
+        locale = current_app.config.get("BABEL_DEFAULT_LOCALE", "es")
+
+    session["lang"] = locale
+
+    next_url = request.form.get("next", "")
+    if not _is_safe_redirect_url(next_url):
+        next_url = request.referrer or url_for("main.home")
+    if not _is_safe_redirect_url(next_url):
+        next_url = url_for("main.home")
+
+    response = redirect(next_url)
+    response.set_cookie("lang", locale, max_age=31536000, samesite="Lax")
+    return response
 
 
 def load_all() -> Dict[str, List[Dict[str, Any]]]:
@@ -80,7 +109,7 @@ def product_new():
         existing_ids = [entity["id"] for entity in client.list_entities("Product")]
         entity_id = make_id("Product", existing_ids)
         client.upsert_entity(to_product_entity(request.form, entity_id))
-        flash("Product created", "success")
+        flash(_("Product created"), "success")
         return redirect(url_for("main.products"))
     return render_template("forms/product_form.html", active="products", product=None)
 
@@ -118,7 +147,7 @@ def product_edit(product_id: str):
     client = get_client()
     if request.method == "POST":
         client.upsert_entity(to_product_entity(request.form, product_id))
-        flash("Product updated", "success")
+        flash(_("Product updated"), "success")
         return redirect(url_for("main.products"))
     product = client.get_entity(product_id)
     return render_template("forms/product_form.html", active="products", product=product)
@@ -128,7 +157,7 @@ def product_edit(product_id: str):
 def product_delete(product_id: str):
     client = get_client()
     client.delete_entity(product_id)
-    flash("Product deleted", "success")
+    flash(_("Product deleted"), "success")
     return redirect(url_for("main.products"))
 
 
@@ -145,7 +174,7 @@ def store_new():
         existing_ids = [entity["id"] for entity in client.list_entities("Store")]
         entity_id = make_id("Store", existing_ids)
         client.upsert_entity(to_store_entity(request.form, entity_id))
-        flash("Store created", "success")
+        flash(_("Store created"), "success")
         return redirect(url_for("main.stores"))
     return render_template("forms/store_form.html", active="stores", store=None)
 
@@ -212,7 +241,7 @@ def store_edit(store_id: str):
     client = get_client()
     if request.method == "POST":
         client.upsert_entity(to_store_entity(request.form, store_id))
-        flash("Store updated", "success")
+        flash(_("Store updated"), "success")
         return redirect(url_for("main.stores"))
     store = client.get_entity(store_id)
     return render_template("forms/store_form.html", active="stores", store=store)
@@ -222,7 +251,7 @@ def store_edit(store_id: str):
 def store_delete(store_id: str):
     client = get_client()
     client.delete_entity(store_id)
-    flash("Store deleted", "success")
+    flash(_("Store deleted"), "success")
     return redirect(url_for("main.stores"))
 
 
@@ -246,7 +275,7 @@ def employee_new():
         existing_ids = [entity["id"] for entity in client.list_entities("Employee")]
         entity_id = make_id("Employee", existing_ids)
         client.upsert_entity(to_employee_entity(request.form, entity_id))
-        flash("Employee created", "success")
+        flash(_("Employee created"), "success")
         return redirect(url_for("main.employees"))
     return render_template("forms/employee_form.html", active="employees", employee=None, stores=stores)
 
@@ -257,7 +286,7 @@ def employee_edit(employee_id: str):
     stores = client.list_entities("Store")
     if request.method == "POST":
         client.upsert_entity(to_employee_entity(request.form, employee_id))
-        flash("Employee updated", "success")
+        flash(_("Employee updated"), "success")
         return redirect(url_for("main.employees"))
     employee = client.get_entity(employee_id)
     return render_template("forms/employee_form.html", active="employees", employee=employee, stores=stores)
@@ -267,7 +296,7 @@ def employee_edit(employee_id: str):
 def employee_delete(employee_id: str):
     client = get_client()
     client.delete_entity(employee_id)
-    flash("Employee deleted", "success")
+    flash(_("Employee deleted"), "success")
     return redirect(url_for("main.employees"))
 
 
@@ -284,7 +313,7 @@ def shelf_new():
     existing_ids = [entity["id"] for entity in client.list_entities("Shelf")]
     entity_id = make_id("Shelf", existing_ids)
     client.upsert_entity(to_shelf_entity(request.form, entity_id))
-    flash("Shelf created", "success")
+    flash(_("Shelf created"), "success")
     return redirect(url_for("main.store_detail", store_id=request.form["refStore"]))
 
 
@@ -292,7 +321,7 @@ def shelf_new():
 def shelf_edit(shelf_id: str):
     client = get_client()
     client.upsert_entity(to_shelf_entity(request.form, shelf_id))
-    flash("Shelf updated", "success")
+    flash(_("Shelf updated"), "success")
     return redirect(url_for("main.store_detail", store_id=request.form["refStore"]))
 
 
@@ -302,7 +331,7 @@ def inventory_new():
     existing_ids = [entity["id"] for entity in client.list_entities("InventoryItem")]
     entity_id = make_id("InventoryItem", existing_ids)
     client.upsert_entity(to_inventory_item_entity(request.form, entity_id))
-    flash("Inventory item created", "success")
+    flash(_("Inventory item created"), "success")
 
     redirect_to = request.form.get("redirectTo", "store")
     if redirect_to == "product":
@@ -317,7 +346,7 @@ def buy_inventory_item(inventory_id: str):
     store_id = item.get("refStore")
 
     if int(item.get("shelfCount", 0)) <= 0:
-        flash("Purchase blocked: shelf stock is empty", "error")
+        flash(_("Purchase blocked: shelf stock is empty"), "error")
         return redirect(url_for("main.store_detail", store_id=store_id))
 
     client.update_attrs(
@@ -327,7 +356,7 @@ def buy_inventory_item(inventory_id: str):
             "stockCount": {"type": "Integer", "value": {"$inc": -1}},
         },
     )
-    flash("One unit purchased", "success")
+    flash(_("One unit purchased"), "success")
     return redirect(url_for("main.store_detail", store_id=store_id))
 
 

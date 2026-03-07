@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}Product Detail | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Product Detail') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block content %}
 <section class="page-head">
   <h1>{{ product.name }}</h1>
-  <p>Price: <strong class="js-price" data-product-id="{{ product.id }}">{{ product.price }}</strong> | Size: {{ product.size }} | Color: {{ product.color }}</p>
+  <p>{{ _('Price') }}: <strong class="js-price" data-product-id="{{ product.id }}">{{ product.price }}</strong> | {{ _('Size') }}: {{ product.size }} | {{ _('Color') }}: {{ product.color }}</p>
 </section>
 {% for store_id, block in grouped.items() %}
 <section class="card">
-  <h3>{{ block.store.name if block.store else store_id }} <small>Total shelf stock: {{ block.total }}</small></h3>
+  <h3>{{ block.store.name if block.store else store_id }} <small>{{ _('Total shelf stock') }}: {{ block.total }}</small></h3>
   <table>
-    <thead><tr><th>Shelf</th><th>Shelf Count</th><th>Stock Count</th></tr></thead>
+    <thead><tr><th>{{ _('Shelf') }}</th><th>{{ _('Shelf Count') }}</th><th>{{ _('Stock Count') }}</th></tr></thead>
     <tbody>
       {% for row in block['items'] %}
       <tr>
@@ -24,12 +24,12 @@
     <input type="hidden" name="redirectTo" value="product">
     <input type="hidden" name="refProduct" value="{{ product.id }}">
     <input type="hidden" name="refStore" value="{{ store_id }}">
-    <label>Add to shelf in this store
+    <label>{{ _('Add to shelf in this store') }}
       <select name="refShelf" class="js-available-shelves" data-store-id="{{ store_id }}" data-product-id="{{ product.id }}" required></select>
     </label>
-    <label>Shelf Count<input type="number" name="shelfCount" min="1" required value="10"></label>
-    <label>Stock Count<input type="number" name="stockCount" min="1" required value="100"></label>
-    <button type="submit" class="btn">Add Inventory</button>
+    <label>{{ _('Shelf Count') }}<input type="number" name="shelfCount" min="1" required value="10"></label>
+    <label>{{ _('Stock Count') }}<input type="number" name="stockCount" min="1" required value="100"></label>
+    <button type="submit" class="btn">{{ _('Add Inventory') }}</button>
   </form>
 </section>
 {% endfor %}

@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Stores | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Stores') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block content %}
 <section class="page-head">
-  <h1>Stores</h1>
-  <a class="btn" href="{{ url_for('main.store_new') }}"><i class="fa-solid fa-plus"></i> New Store</a>
+  <h1>{{ _('Stores') }}</h1>
+  <a class="btn" href="{{ url_for('main.store_new') }}"><i class="fa-solid fa-plus"></i> {{ _('New Store') }}</a>
 </section>
 <div class="table-wrap">
   <table>
     <thead>
-      <tr><th>Image</th><th>Name</th><th>Country</th><th>Temp</th><th>Humidity</th><th>Actions</th></tr>
+      <tr><th>{{ _('Image') }}</th><th>{{ _('Name') }}</th><th>{{ _('Country') }}</th><th>{{ _('Temp') }}</th><th>{{ _('Humidity') }}</th><th>{{ _('Actions') }}</th></tr>
     </thead>
     <tbody>
       {% for store in stores %}
@@ -16,12 +16,12 @@
         <td><img class="thumb store-thumb" src="{{ store.image or 'https://placehold.co/80x80' }}" alt="{{ store.name }}"></td>
         <td><a href="{{ url_for('main.store_detail', store_id=store.id) }}">{{ store.name }}</a></td>
         <td>{{ store.countryCode or '-' }}</td>
-        <td><i class="fa-solid fa-temperature-three-quarters"></i> {{ store.temperature or 'N/A' }}</td>
-        <td><i class="fa-solid fa-droplet"></i> {{ store.relativeHumidity or 'N/A' }}</td>
+        <td><i class="fa-solid fa-temperature-three-quarters"></i> {{ store.temperature or _('N/A') }}</td>
+        <td><i class="fa-solid fa-droplet"></i> {{ store.relativeHumidity or _('N/A') }}</td>
         <td class="actions">
-          <a class="btn ghost" href="{{ url_for('main.store_edit', store_id=store.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('main.store_delete', store_id=store.id) }}" onsubmit="return confirm('Delete store?')">
-            <button class="btn danger" type="submit">Delete</button>
+          <a class="btn ghost" href="{{ url_for('main.store_edit', store_id=store.id) }}">{{ _('Edit') }}</a>
+          <form method="post" action="{{ url_for('main.store_delete', store_id=store.id) }}" onsubmit="return confirm('{{ _('Delete store?') }}')">
+            <button class="btn danger" type="submit">{{ _('Delete') }}</button>
           </form>
         </td>
       </tr>

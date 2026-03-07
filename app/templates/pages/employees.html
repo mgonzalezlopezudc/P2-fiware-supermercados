@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Employees | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Employees') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block content %}
 <section class="page-head">
-  <h1>Employees</h1>
-  <a class="btn" href="{{ url_for('main.employee_new') }}"><i class="fa-solid fa-plus"></i> New Employee</a>
+  <h1>{{ _('Employees') }}</h1>
+  <a class="btn" href="{{ url_for('main.employee_new') }}"><i class="fa-solid fa-plus"></i> {{ _('New Employee') }}</a>
 </section>
 <div class="table-wrap">
   <table>
-    <thead><tr><th>Photo</th><th>Name</th><th>Role</th><th>Skills</th><th>Store</th><th>Actions</th></tr></thead>
+    <thead><tr><th>{{ _('Photo') }}</th><th>{{ _('Name') }}</th><th>{{ _('Role') }}</th><th>{{ _('Skills') }}</th><th>{{ _('Store') }}</th><th>{{ _('Actions') }}</th></tr></thead>
     <tbody>
       {% for employee in employees %}
       <tr>
@@ -17,9 +17,9 @@
         <td>{{ employee.skills|join(', ') if employee.skills is iterable and employee.skills is not string else employee.skills }}</td>
         <td>{{ stores.get(employee.refStore).name if stores.get(employee.refStore) else employee.refStore }}</td>
         <td class="actions">
-          <a class="btn ghost" href="{{ url_for('main.employee_edit', employee_id=employee.id) }}">Edit</a>
-          <form method="post" action="{{ url_for('main.employee_delete', employee_id=employee.id) }}" onsubmit="return confirm('Delete employee?')">
-            <button class="btn danger" type="submit">Delete</button>
+          <a class="btn ghost" href="{{ url_for('main.employee_edit', employee_id=employee.id) }}">{{ _('Edit') }}</a>
+          <form method="post" action="{{ url_for('main.employee_delete', employee_id=employee.id) }}" onsubmit="return confirm('{{ _('Delete employee?') }}')">
+            <button class="btn danger" type="submit">{{ _('Delete') }}</button>
           </form>
         </td>
       </tr>

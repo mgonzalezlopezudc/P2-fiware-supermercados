@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Stores Map | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Stores Map') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block extra_head %}
 <link
   rel="stylesheet"
@@ -7,9 +7,9 @@
 />
 {% endblock %}
 {% block content %}
-<section class="page-head"><h1>Stores Map</h1></section>
+<section class="page-head"><h1>{{ _('Stores Map') }}</h1></section>
 <section class="map-stage">
-  <div id="stores-leaflet-map" aria-label="Interactive stores map"></div>
+  <div id="stores-leaflet-map" aria-label="{{ _('Interactive stores map') }}"></div>
   <script id="stores-map-data" type="application/json">{{ stores | tojson }}</script>
 </section>
 {% endblock %}

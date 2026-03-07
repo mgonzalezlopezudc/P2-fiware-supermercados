@@ -63,6 +63,16 @@ Branch: `feat/fiware-implementation-issue-2`
 - [ ] HTML validation attributes (`required`, `pattern`, `min`, `max`, `step`, etc.)
 - [ ] JS validation with clear error messages and submit blocking
 
+## Internationalization (EN/ES)
+- [ ] Add Flask-Babel dependency and app initialization
+- [ ] Configure locale resolution and persistence (`?lang`, session, cookie)
+- [ ] Add navbar language switcher and apply safe redirect handling
+- [ ] Externalize and translate route flash messages
+- [ ] Externalize and translate template UI strings
+- [ ] Externalize and translate frontend JS dynamic messages/toasts
+- [ ] Maintain translation catalogs under `translations/` and compile `.mo` files
+- [ ] Validate language switching behavior with automated tests
+
 ## Visual Requirements
 - [ ] Employee photo hover zoom (CSS)
 - [ ] Store photo hover zoom + 360 deg rotation (CSS)
@@ -76,3 +86,4 @@ Branch: `feat/fiware-implementation-issue-2`
 - [ ] Subscriptions and real-time checks completed
 - [ ] Purchase operation checks completed
 - [ ] UI/UX checks completed
+- [ ] i18n checks completed for both locales (`es` and `en`)

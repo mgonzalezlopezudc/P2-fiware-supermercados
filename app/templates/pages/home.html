@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Home | FIWARE Markets{% endblock %}
+{% block title %}{{ _('Home') }} | {{ _('FIWARE Markets') }}{% endblock %}
 {% block content %}
 <section class="hero">
-  <h1>Supermarket Chain Control Panel</h1>
-  <p>NGSIv2 + Orion + Flask dashboard with real-time updates and context-provider integration.</p>
+  <h1>{{ _('Supermarket Chain Control Panel') }}</h1>
+  <p>{{ _('NGSIv2 + Orion + Flask dashboard with real-time updates and context-provider integration.') }}</p>
 </section>
 <section class="kpis">
-  <article><span>{{ metrics.stores }}</span><small>Stores</small></article>
-  <article><span>{{ metrics.products }}</span><small>Products</small></article>
-  <article><span>{{ metrics.shelves }}</span><small>Shelves</small></article>
-  <article><span>{{ metrics.inventory }}</span><small>Inventory Items</small></article>
-  <article><span>{{ metrics.employees }}</span><small>Employees</small></article>
+  <article><span>{{ metrics.stores }}</span><small>{{ _('Stores') }}</small></article>
+  <article><span>{{ metrics.products }}</span><small>{{ _('Products') }}</small></article>
+  <article><span>{{ metrics.shelves }}</span><small>{{ _('Shelves') }}</small></article>
+  <article><span>{{ metrics.inventory }}</span><small>{{ _('Inventory Items') }}</small></article>
+  <article><span>{{ metrics.employees }}</span><small>{{ _('Employees') }}</small></article>
 </section>
 <section class="uml-card">
-  <h2>Entity UML</h2>
+  <h2>{{ _('Entity UML') }}</h2>
   <pre class="mermaid">classDiagram
     class Store {
       +id

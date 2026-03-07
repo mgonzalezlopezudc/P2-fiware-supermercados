@@ -1,24 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}{{ 'Edit Product' if product else 'New Product' }}{% endblock %}
+{% block title %}{{ _('Edit Product') if product else _('New Product') }}{% endblock %}
 {% block content %}
 <section class="page-head">
-  <h1>{{ 'Edit Product' if product else 'New Product' }}</h1>
+  <h1>{{ _('Edit Product') if product else _('New Product') }}</h1>
 </section>
 <form class="grid-form" method="post" novalidate>
-  <label>Name<input type="text" name="name" required minlength="2" value="{{ product.name if product else '' }}"></label>
-  <label>Price<input type="number" step="0.01" min="0" name="price" required value="{{ product.price if product else '' }}"></label>
-  <label>Size
+  <label>{{ _('Name') }}<input type="text" name="name" required minlength="2" value="{{ product.name if product else '' }}"></label>
+  <label>{{ _('Price') }}<input type="number" step="0.01" min="0" name="price" required value="{{ product.price if product else '' }}"></label>
+  <label>{{ _('Size') }}
     <select name="size" required>
       {% for size in ['XS','S','M','L','XL'] %}
       <option value="{{ size }}" {% if product and product.size == size %}selected{% endif %}>{{ size }}</option>
       {% endfor %}
     </select>
   </label>
-  <label>Color<input type="color" name="color" required pattern="^#[0-9A-Fa-f]{6}$" value="{{ product.color if product else '#0099ff' }}"></label>
-  <label>Image URL<input type="url" name="image" value="{{ product.image if product else '' }}"></label>
+  <label>{{ _('Color') }}<input type="color" name="color" required pattern="^#[0-9A-Fa-f]{6}$" value="{{ product.color if product else '#0099ff' }}"></label>
+  <label>{{ _('Image URL') }}<input type="url" name="image" value="{{ product.image if product else '' }}"></label>
   <div class="form-actions">
-    <button type="submit" class="btn">Save</button>
-    <a href="{{ url_for('main.products') }}" class="btn ghost">Cancel</a>
+    <button type="submit" class="btn">{{ _('Save') }}</button>
+    <a href="{{ url_for('main.products') }}" class="btn ghost">{{ _('Cancel') }}</a>
   </div>
 </form>
 {% endblock %}

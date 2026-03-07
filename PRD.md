@@ -1,41 +1,76 @@
 # Product Requirements Document
 
 ## Product
-FIWARE Supermarkets management web app using Orion NGSIv2 as business data source.
+FIWARE Supermarkets is a Flask web UI over Orion NGSIv2 to manage supermarket entities and monitor real-time updates.
 
-## Goals
-- Manage `Store`, `Product`, `Shelf`, `InventoryItem`, `Employee` entities with CRUD and relationship workflows.
-- Integrate Orion context providers for store external attributes (`temperature`, `relativeHumidity`, `tweets`) using explicit registrations per store (`001`, `002`, `003`, `004`) without wildcard `idPattern`.
-- Receive Orion subscriptions and update UI in real time through Socket.IO.
+## Objectives
+- Keep Orion as the single source of truth for supermarket business entities.
+- Provide operational CRUD workflows for daily store management.
+- Integrate external context-provider attributes for stores (`temperature`, `relativeHumidity`, `tweets`).
+- Surface Orion subscription events to users in real time via Socket.IO.
 
 ## Users
 - Store operations staff.
 - Inventory managers.
-- Supervisors tracking low stock alerts.
+- Supervisors monitoring low-stock conditions.
 
-## Functional Scope
-- Sticky navigation and pages: `Home`, `Products`, `Product detail`, `Stores`, `Store detail`, `Employees`, `Stores Map`.
-- CRUD operations for `Product`, `Store`, `Employee`.
-- Shelf and inventory management with dynamic filtered selects.
-- Purchase action reducing `shelfCount` and `stockCount` with empty shelf protection.
-- Real-time price and low-stock notifications.
-- Real-time notifications are displayed as global toast messages across pages/tabs, not only as console output.
-- `Stores Map` is implemented with Leaflet + OpenStreetMap tiles, with one marker per store based on NGSI `Store.location` coordinates.
-- Leaflet map popups include store name, locality, and direct link to the store detail page.
-- Store markers use a custom branded visual style to improve map readability.
-- Map initialization includes CDN fallback loading to improve reliability when a provider is unavailable.
-- Store detail shows compact temperature/humidity cards and a full-width tweets section to improve readability.
-- Tweets layout in store detail is responsive: 3 columns on desktop, 2 on tablet, 1 on mobile.
-- Bootstrap script `import-data` must seed all mandatory attributes defined in the data model for each entity type, except provider-managed `Store` attributes (`temperature`, `relativeHumidity`, `tweets`) which are supplied by registered Orion context providers.
-- Seed dataset includes 4 employees and free-to-use, context-appropriate images for stores, products, and employees.
+## Functional requirements
 
-## Non-functional Requirements
-- Flask + Jinja2 + plain HTML/CSS/JS.
-- Orion NGSIv2 APIs for all entity persistence.
-- Socket.IO browser client must load successfully (CDN script with valid SRI hash) so real-time notifications can reach the UI.
-- Socket.IO server async mode must be compatible with the selected web server runtime (`threading` for Werkzeug/dev, `eventlet` for eventlet server deployments).
-- Notification payloads received from Orion must be normalized into plain values before broadcasting to browser clients.
-- App startup must guard against invalid runtime/mode combinations (for example `eventlet` configured while running through `flask run`) and fall back to a compatible mode.
-- Development/debug runtime must preserve stable multi-tab real-time delivery (prefer direct `run.py` launch over Flask CLI wrappers).
-- Clean, modern 'minimalist light' interface built with vanilla CSS (glassmorphism, subtle shadows, high contrast).
-- Infrastructure lifecycle via `./services start` and `./services stop`.
+### Entity coverage
+- Supported entity types: `Store`, `Product`, `Shelf`, `InventoryItem`, `Employee`.
+- Full CRUD screens and handlers for `Store`, `Product`, `Employee`.
+- `Shelf` and `InventoryItem` creation/edit flows embedded in detail pages.
+
+### Navigation and views
+- Top-level views: `Home`, `Products`, `Stores`, `Employees`, `Stores Map`.
+- `Home` displays KPI counters and a Mermaid class diagram.
+- `Product detail` groups inventory by store and allows adding inventory to unused shelves.
+- `Store detail` groups inventory by shelf, shows shelf fill progress, and allows purchases.
+- `Store detail` displays store weather metrics and tweets data when present.
+
+### Multilanguage support
+- UI supports `Spanish` and `English`.
+- Default locale is `Spanish` when no preference is provided.
+- Language can be switched from the navbar selector and persists in session/cookie.
+- Locale resolution priority: query parameter (`?lang=`), session, cookie, `Accept-Language`, then default locale.
+- All user-facing text in routes, templates, and frontend dynamic notifications is translatable.
+
+### Business operations
+- Purchase operation (`/inventory/<id>/buy`) must decrement:
+- `shelfCount` by `-1`
+- `stockCount` by `-1`
+- Purchase is blocked when `shelfCount <= 0`.
+
+### Dynamic validation and helpers
+- HTML forms use built-in constraints (`required`, `min`, `pattern`, `type`, etc.).
+- Frontend JS blocks invalid form submissions on `novalidate` forms.
+- Dynamic select APIs prevent duplicate product/shelf assignments:
+- Available shelves for a product in a store.
+- Available products for a shelf.
+
+### Real-time updates
+- Startup ensures Orion subscriptions exist for:
+- Product price changes.
+- Low stock (`shelfCount < 10`) per store `001` to `004`.
+- Notification endpoints receive Orion payloads, normalize values, and emit Socket.IO events.
+- Frontend updates visible prices and shows global toast notifications.
+
+### External provider integration
+- Startup ensures exact-ID registrations for stores `001`, `002`, `003`, `004`.
+- Provider-managed attributes:
+- `temperature`, `relativeHumidity` from weather endpoint.
+- `tweets` from tweets endpoint.
+
+### Map experience
+- `Stores Map` renders Leaflet markers from `Store.location.coordinates` (`[lon, lat]`).
+- Popup content includes store name, optional locality, and a detail-page link.
+- Leaflet script loading includes fallback CDN; if all loads fail, show a user-visible error message.
+
+## Non-functional requirements
+- Stack: Flask, Jinja2 templates, vanilla JavaScript/CSS, Flask-SocketIO.
+- Data access: Orion NGSIv2 (`/v2/entities`, `/v2/op/update`, `/v2/entities/<id>/attrs`, subscriptions, registrations).
+- Runtime compatibility: default Socket.IO async mode is `threading`; `eventlet` is supported only with eventlet runtime.
+- Reliability safeguard: when started via `flask run`, configured `eventlet` mode is auto-adjusted to `threading`.
+- Internationalization runtime uses `Flask-Babel` catalogs under `translations/`.
+- Infrastructure lifecycle uses repository scripts (`./services start`, `./services stop`).
+- Seed script (`import-data`) initializes baseline entities for all managed types, with provider-managed store attrs supplied by context providers.
