@@ -1,0 +1,8 @@
+flowchart LR
+    U[Usuario\nNavegador] -->|HTTP/HTML| F[Flask + Jinja2\nrun.py / app routes]
+    U <-->|Socket.IO| S[Flask-SocketIO]
+    F -->|NGSIv2 REST| O[FIWARE Orion Context Broker]
+    O -->|Notificaciones\n/subscription/*| F
+    O -->|Consulta attrs externos| C[Context Provider\nweather/tweets]
+    F -->|i18n| T[Flask-Babel\ntranslations es/en]
+    O --> M[(MongoDB)]

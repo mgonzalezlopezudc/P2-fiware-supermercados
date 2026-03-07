@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant Orion as Orion CB
+    participant Flask as Flask Route\n/subscription/price-change
+    participant Socket as Flask-SocketIO
+    participant Browser as Browser (main.js)
+
+    Orion->>Flask: POST notification (data[])
+    Flask->>Flask: normalize payload (keyValues)
+    Flask->>Socket: emit("price_change", items)
+    Socket-->>Browser: websocket event
+    Browser->>Browser: update DOM + show toast
