@@ -1,7 +1,6 @@
 # Data Model (NGSIv2)
 
 ## Store
-Mandatory attributes:
 - `id`
 - `name`
 - `address` (`PostalAddress` object with `streetAddress`, `addressRegion`, `addressLocality`, `postalCode`)
@@ -14,8 +13,6 @@ Mandatory attributes:
 - `temperature`
 - `relativeHumidity`
 - `tweets`
-
-Optional but used in UI seed data:
 - `image` (URL)
 
 Presentation usage:
@@ -24,23 +21,17 @@ Presentation usage:
 - If Leaflet assets cannot be loaded from CDN, the UI shows an explicit map load error message instead of a blank area.
 
 ## Product
-Mandatory attributes:
 - `id`, `name`, `price`, `size`, `color`
 - `color` format: `#RRGGBB`
-
-Optional but used in UI seed data:
 - `image` (URL)
 
 ## Shelf
-Mandatory attributes:
 - `id`, `name`, `location`, `maxCapacity`, `refStore`
 
 ## InventoryItem
-Mandatory attributes:
 - `id`, `refProduct`, `refStore`, `refShelf`, `stockCount`, `shelfCount`
 
 ## Employee
-Mandatory attributes:
 - `id`, `name`, `image`, `salary`, `role`, `refStore`, `email`, `dateOfContract`, `skills`, `username`, `password`
 
 ## Seed Dataset

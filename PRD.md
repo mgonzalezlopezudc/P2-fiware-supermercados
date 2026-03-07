@@ -31,5 +31,5 @@ FIWARE Supermarkets management web app using Orion NGSIv2 as business data sourc
 ## Non-functional Requirements
 - Flask + Jinja2 + plain HTML/CSS/JS.
 - Orion NGSIv2 APIs for all entity persistence.
-- Visual effects mostly done in CSS.
+- Clean, modern 'minimalist light' interface built with vanilla CSS (glassmorphism, subtle shadows, high contrast).
 - Infrastructure lifecycle via `./services start` and `./services stop`.
