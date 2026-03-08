@@ -338,12 +338,62 @@ async function setupStoresLeafletMap() {
   renderStoresLeafletMap(mapNode, stores);
 }
 
+function getTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    return savedTheme;
+  }
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+function setTheme(theme) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+  localStorage.setItem('theme', theme);
+
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    toggle.checked = theme === 'dark';
+  }
+}
+
+function setupThemeToggle() {
+  // Apply saved or system preference on load
+  const theme = getTheme();
+  setTheme(theme);
+
+  // Listen for system preference changes
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      const savedTheme = localStorage.getItem('theme');
+      if (!savedTheme) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  // Listen for toggle switch changes
+  const toggle = document.getElementById('theme-toggle');
+  if (toggle) {
+    toggle.addEventListener('change', (e) => {
+      setTheme(e.target.checked ? 'dark' : 'light');
+    });
+  }
+}
+
 function initPage() {
   setupSocket();
   setupDynamicSelects();
   setupFormValidation();
   setupProgressBars();
   setupStoresLeafletMap();
+  setupThemeToggle();
 }
 
 if (document.readyState === 'loading') {
